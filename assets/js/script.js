@@ -41,7 +41,7 @@ var getCity = function(lat, lon) {
                     displayForecast(data);
 
                     // create a search history
-                    searchHistory();
+                    searchHistory(data);
 
                     // clear the search field
                     cityInputEl.value = "";
@@ -106,6 +106,16 @@ var displayWeather = function(data) {
     cityDate.appendChild(weatherImg);
     curWeather.append(temp, wind, humidity, uv);
     uv.appendChild(uvIndex);
+
+    // save current weather data at local storage
+    var weatherData = {
+        "date" : (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear(),
+        "temp" : data.current.temp, 
+        "wind" : data.current.wind_speed,
+        "humidity" : data.current.humidity,
+        "uv" : data.current.uvi
+    }
+    localStorage.setItem("current " + city.value, JSON.stringify(weatherData));
 }
 
 // display 5-day forecast
@@ -137,10 +147,19 @@ var displayForecast = function(data) {
         
         forecastEl.appendChild(dayCard);
         dayCard.append(forecastDate, forecastIcon, forecastTemp, forecastWind, forecastHumidity);
+    
+        // save forecast data at local storage
+        var forecastData = {
+        "date" : (today.getMonth()+1) + "/" + (today.getDate()+i+1) + "/" + today.getFullYear(),
+        "temp" : data.daily[i].temp.day, 
+        "wind" : data.daily[i].wind_speed,
+        "humidity" : data.daily[i].humidity
+        }
+        localStorage.setItem("day" + [i+1] + city.value, JSON.stringify(forecastData));
     }
 }
 
-var searchHistory = function() {
+var searchHistory = function(data) {
     // create button for a city
     var searchCity = document.createElement("btn");
     var cityName = cityInputEl.value.trim();
@@ -152,9 +171,20 @@ var searchHistory = function() {
 
     historyEl.appendChild(searchCity);
 
+    // display a city in search history again when a user click it
+    $(searchCity).click(function() {
+        var clickedCity = $(this);
+        getLatLon(clickedCity);
+    })
 }
 
+// display a city in search history again when a user click it
+// var displaySearchHandler = function() {
+    
+// }
+
 searchFormEl.addEventListener("submit", citySubmitHandler);
+// historyEl.addEventListener("submit", displaySearchHandler);
 
 
 
