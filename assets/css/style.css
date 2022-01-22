@@ -12,7 +12,7 @@ h1 {
     font-weight: 900;
 }
 
-h3 {
+h3, h4 {
     font-weight: 700;
 }
 
@@ -46,4 +46,28 @@ p {
     color: white;
     border-radius: 5px;
     padding: 0 20px 0 20px
+}
+
+.moderate {
+    background-color: yellow;
+    border-radius: 5px;
+    padding: 0 20px 0 20px
+}
+
+.severe {
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    padding: 0 20px 0 20px
+}
+
+#forecast-container {
+    margin: 0;
+    padding-top: 10px;
+}
+
+.card {
+    margin: 10px 32px 0 0;
+    background-color: #012a4a;
+    color: white;
 }

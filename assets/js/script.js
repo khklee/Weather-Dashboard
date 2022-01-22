@@ -1,6 +1,8 @@
 var searchFormEl = document.querySelector("#search-form");
 var cityInputEl = document.querySelector("#city")
 var weatherEl = document.querySelector("#weather-container")
+var forecastEl = document.querySelector("#forecast-container");
+var forecastCardEl = document.querySelector("#card");
 var today = new Date();
 
 // request geographical coordinates (lat, lon)
@@ -32,8 +34,13 @@ var getCity = function(lat, lon) {
                 response.json().then(function(data) {
                     console.log(data)
 
+
+                    
                     // display current weather
                     displayWeather(data);
+
+                    // display 5-day forecast
+                    displayForecast(data);
                     
                     // clear the search field
                     cityInputEl.value = "";
@@ -60,7 +67,6 @@ var citySubmitHandler = function(event) {
 
 // display current weather of a city
 var displayWeather = function(data) {
-
     // clear old data
     weatherEl.textContent = "";
 
@@ -76,17 +82,17 @@ var displayWeather = function(data) {
 
     curWeather.classList = "current-weather";
     cityDate.classList = "city";
-    
+
     // UV conditions indicator
-    if (0 <= uvIndex < 3) {
+    if (data.current.uvi < 3) {
         uvIndex.classList = "favorable";
-    } else if (3 < uvIndex < 8) {
+    } else if (data.current.uvi < 8) {
         uvIndex.classList = "moderate";
     } else {
         uvIndex.classList = "severe";
     };
-    
-    weatherImg.setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png")
+
+    weatherImg.setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + ".png")
 
     cityDate.textContent = city.value + " (" + (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear() + ")";
     temp.textContent = "Temp: " + data.current.temp + "°F";
@@ -101,6 +107,56 @@ var displayWeather = function(data) {
     curWeather.append(temp, wind, humidity, uv);
     uv.appendChild(uvIndex);
 }
+
+// display 5-day forecast
+
+var displayForecast = function(data) {
+    // clear old data
+    forecastEl.textContent = "";
+
+    // create 5-day forecast cards
+    var forecastTitle = document.createElement("h3");
+    // var dayCard = document.createElement("div");
+    // var forecastDate = document.createElement("h4");
+    // var forecastIcon = document.createElement("img");
+    // var forecastTemp = document.createElement("p");
+    // var forecastWind = document.createElement("p");
+    // var forecastHumidity = document.createElement("p");
+    
+
+    forecastTitle.textContent = "5-Day Forecast:";
+    
+    forecastEl.appendChild(forecastTitle);
+    // forecastEl.appendChild(dayCard);
+    
+    // forecastDate.textContent = (today.getMonth()+1) + "/" + (today.getDate()+1) + "/" + today.getFullYear();
+    // forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[0].weather[0].icon + ".png");
+    // forecastTemp.textContent = "Temp: " + data.daily[0].temp.day + "°F";
+    // forecastWind.textContent = "Wind: " + data.daily[0].wind_speed + " MPH";
+    // forecastHumidity.textContent = "Humidity: " + data.daily[0].humidity + "%";
+    
+    // create forecast for 5 days
+    for (var i = 0; i < 5; i++) {
+        var dayCard = document.createElement("div");
+        var forecastDate = document.createElement("h4");
+        var forecastIcon = document.createElement("img");
+        var forecastTemp = document.createElement("p");
+        var forecastWind = document.createElement("p");
+        var forecastHumidity = document.createElement("p");
+
+        dayCard.classList = "card col-sm-2";
+
+        forecastDate.textContent = (today.getMonth()+1) + "/" + (today.getDate()+i+1) + "/" + today.getFullYear();
+        forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + ".png");
+        forecastTemp.textContent = "Temp: " + data.daily[i].temp.day + "°F";
+        forecastWind.textContent = "Wind: " + data.daily[1].wind_speed + "MPH";
+        forecastHumidity.textContent = "Humidity: " + data.daily[1].humidity + "%";
+        
+        forecastEl.appendChild(dayCard);
+        dayCard.append(forecastDate, forecastIcon, forecastTemp, forecastWind, forecastHumidity);
+    }
+}
+
 
 searchFormEl.addEventListener("submit", citySubmitHandler);
 
