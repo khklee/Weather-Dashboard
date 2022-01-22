@@ -3,6 +3,7 @@ var cityInputEl = document.querySelector("#city")
 var weatherEl = document.querySelector("#weather-container")
 var forecastEl = document.querySelector("#forecast-container");
 var forecastCardEl = document.querySelector("#card");
+var historyEl = document.querySelector("#history");
 var today = new Date();
 
 // request geographical coordinates (lat, lon)
@@ -24,7 +25,6 @@ var getLatLon = function(city) {
         })
 };
 
-
 // request a weather from the URL
 var getCity = function(lat, lon) {
     var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly&units=imperial&appid=4d7dc3e3b9de372c87b2cd21104c5026";
@@ -33,18 +33,18 @@ var getCity = function(lat, lon) {
             if (response.ok) {
                 response.json().then(function(data) {
                     console.log(data)
-
-
                     
                     // display current weather
                     displayWeather(data);
 
                     // display 5-day forecast
                     displayForecast(data);
-                    
+
+                    // create a search history
+                    searchHistory();
+
                     // clear the search field
                     cityInputEl.value = "";
-
                 })
             } else {
                 alert("City Name Not Found!");
@@ -109,33 +109,16 @@ var displayWeather = function(data) {
 }
 
 // display 5-day forecast
-
 var displayForecast = function(data) {
     // clear old data
     forecastEl.textContent = "";
 
-    // create 5-day forecast cards
+    // create card title
     var forecastTitle = document.createElement("h3");
-    // var dayCard = document.createElement("div");
-    // var forecastDate = document.createElement("h4");
-    // var forecastIcon = document.createElement("img");
-    // var forecastTemp = document.createElement("p");
-    // var forecastWind = document.createElement("p");
-    // var forecastHumidity = document.createElement("p");
-    
-
     forecastTitle.textContent = "5-Day Forecast:";
-    
     forecastEl.appendChild(forecastTitle);
-    // forecastEl.appendChild(dayCard);
-    
-    // forecastDate.textContent = (today.getMonth()+1) + "/" + (today.getDate()+1) + "/" + today.getFullYear();
-    // forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[0].weather[0].icon + ".png");
-    // forecastTemp.textContent = "Temp: " + data.daily[0].temp.day + "°F";
-    // forecastWind.textContent = "Wind: " + data.daily[0].wind_speed + " MPH";
-    // forecastHumidity.textContent = "Humidity: " + data.daily[0].humidity + "%";
-    
-    // create forecast for 5 days
+ 
+    // create cards for 5 days forecast
     for (var i = 0; i < 5; i++) {
         var dayCard = document.createElement("div");
         var forecastDate = document.createElement("h4");
@@ -144,19 +127,32 @@ var displayForecast = function(data) {
         var forecastWind = document.createElement("p");
         var forecastHumidity = document.createElement("p");
 
-        dayCard.classList = "card col-sm-2";
+        dayCard.classList = "card col-2";
 
         forecastDate.textContent = (today.getMonth()+1) + "/" + (today.getDate()+i+1) + "/" + today.getFullYear();
         forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + ".png");
         forecastTemp.textContent = "Temp: " + data.daily[i].temp.day + "°F";
-        forecastWind.textContent = "Wind: " + data.daily[1].wind_speed + "MPH";
-        forecastHumidity.textContent = "Humidity: " + data.daily[1].humidity + "%";
+        forecastWind.textContent = "Wind: " + data.daily[i].wind_speed + "MPH";
+        forecastHumidity.textContent = "Humidity: " + data.daily[i].humidity + "%";
         
         forecastEl.appendChild(dayCard);
         dayCard.append(forecastDate, forecastIcon, forecastTemp, forecastWind, forecastHumidity);
     }
 }
 
+var searchHistory = function() {
+    // create button for a city
+    var searchCity = document.createElement("btn");
+    var cityName = cityInputEl.value.trim();
+
+    historyEl.classList = "search-history"
+    searchCity.setAttribute("type", "submit")
+    searchCity.classList = "btn search-btn city";
+    searchCity.textContent = cityName;
+
+    historyEl.appendChild(searchCity);
+
+}
 
 searchFormEl.addEventListener("submit", citySubmitHandler);
 

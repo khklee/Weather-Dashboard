@@ -2,18 +2,28 @@ body {
     font-family: 'Luxurious Roman', cursive;
 }
 
+.container {
+    width: 100%;
+    margin: 0;
+}
+
 h1 {
     text-align: center;
     background: linear-gradient(to right, #012a4a, #a9d6e5);
     color: white;
-    height: 8vh;
-    padding-top: 10px;
+    height: 10vh;
+    padding: 10px;
     margin-bottom: 20px;
     font-weight: 900;
 }
 
-h3, h4 {
+h3 {
     font-weight: 700;
+}
+
+h4 {
+    font-weight: 700;
+    margin: 10px 0 0 10px;
 }
 
 input {
@@ -70,4 +80,19 @@ p {
     margin: 10px 32px 0 0;
     background-color: #012a4a;
     color: white;
+}
+
+.search-history {
+    width: 81%;
+    margin-top: 20px;
+    border-top: 2px solid #a1adb3;
+    
+}
+
+.search-btn {
+    color: white;
+    background-color: #a1adb3;
+    width: 100%;
+    margin-top: 20px;
+
 }
