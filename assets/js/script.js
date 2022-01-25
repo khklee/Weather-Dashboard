@@ -1,5 +1,6 @@
 var searchFormEl = document.querySelector("#search-form");
 var cityInputEl = document.querySelector("#city")
+var cityName = cityInputEl.value;
 var weatherEl = document.querySelector("#weather-container")
 var forecastEl = document.querySelector("#forecast-container");
 var forecastCardEl = document.querySelector("#card");
@@ -14,34 +15,34 @@ var getLatLon = function(city) {
             if (response.ok) {
                 response.json().then(function(data) {
                     console.log(data)
-
                     // get lat & lon from a city name
                     var cityLat = data[0].lat;
                     var cityLon = data[0].lon;
+                    var city = data[0].name;
                     // get city's weather
-                    getCity(cityLat, cityLon);
+                    getCity(cityLat, cityLon, city)
+
+
+
                 })
             }
         })
 };
 
 // request a weather from the URL
-var getCity = function(lat, lon) {
+var getCity = function(lat, lon, city) {
     var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly&units=imperial&appid=4d7dc3e3b9de372c87b2cd21104c5026";
     fetch(apiURL)
         .then(function(response) {
             if (response.ok) {
                 response.json().then(function(data) {
                     console.log(data)
-                    
+
                     // display current weather
-                    displayWeather(data);
+                    displayWeather(data, city);
 
                     // display 5-day forecast
-                    displayForecast(data);
-
-                    // create a search history
-                    searchHistory(data);
+                    displayForecast(data, city);
 
                     // clear the search field
                     cityInputEl.value = "";
@@ -60,13 +61,14 @@ var citySubmitHandler = function(event) {
 
     if (cityName) {
         getLatLon(cityName);
+        searchHistory(cityName);
     } else {
         alert("Please enter a city name.")
     }
 }
 
 // display current weather of a city
-var displayWeather = function(data) {
+var displayWeather = function(data, city) {
     // clear old data
     weatherEl.textContent = "";
 
@@ -94,7 +96,7 @@ var displayWeather = function(data) {
 
     weatherImg.setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + ".png")
 
-    cityDate.textContent = city.value + " (" + (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear() + ")";
+    cityDate.textContent = city + " (" + (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear() + ")";
     temp.textContent = "Temp: " + data.current.temp + "°F";
     wind.textContent = "Wind: " + data.current.wind_speed + " MPH";
     humidity.textContent = "Humidity: " + data.current.humidity + "%";
@@ -115,11 +117,11 @@ var displayWeather = function(data) {
         "humidity" : data.current.humidity,
         "uv" : data.current.uvi
     }
-    localStorage.setItem("current " + city.value, JSON.stringify(weatherData));
+    localStorage.setItem("current " + city, JSON.stringify(weatherData));
 }
 
 // display 5-day forecast
-var displayForecast = function(data) {
+var displayForecast = function(data, city) {
     // clear old data
     forecastEl.textContent = "";
 
@@ -155,38 +157,41 @@ var displayForecast = function(data) {
         "wind" : data.daily[i].wind_speed,
         "humidity" : data.daily[i].humidity
         }
-        localStorage.setItem("day" + [i+1] + city.value, JSON.stringify(forecastData));
+        localStorage.setItem("day" + [i+1] + city, JSON.stringify(forecastData));
     }
 }
 
-var searchHistory = function(data) {
+var searchHistory = function(city) {
     // create button for a city
     var searchCity = document.createElement("btn");
-    var cityName = cityInputEl.value.trim();
-
+    // var cityName = city;
     historyEl.classList = "search-history"
-    searchCity.setAttribute("type", "submit")
+    searchCity.setAttribute("type", "click")
     searchCity.classList = "btn search-btn city";
-    searchCity.textContent = cityName;
+    searchCity.textContent = city;
 
     historyEl.appendChild(searchCity);
 
     // display a city in search history again when a user click it
-    $(searchCity).click(function() {
-        var clickedCity = $(this);
-        getLatLon(clickedCity);
+    $(document).ready(function() {
+            
+        $(".search-btn").click(function () {
+            var searchedCity = $(this).text();
+            getLatLon(searchedCity);
+        })
     })
-}
 
+}        
+                    
 // display a city in search history again when a user click it
-// var displaySearchHandler = function() {
-    
-// }
+$(document).ready(function() {
+        
+    $(".search-btn").click(function () {
+        var searchedCity = $(this).text();
+        console.log(searchedCity)
+        getLatLon(searchedCity);
+        // $(this).remove();    
+    })
+})
 
 searchFormEl.addEventListener("submit", citySubmitHandler);
-// historyEl.addEventListener("submit", displaySearchHandler);
-
-
-
-
-
