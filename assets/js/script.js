@@ -9,7 +9,7 @@ var today = new Date();
 
 // request geographical coordinates (lat, lon)
 var getLatLon = function(city) {
-    var apiUrl = "http://api.openweathermap.org/geo/1.0/direct?q="+ city + "&limit=1&appid=4d7dc3e3b9de372c87b2cd21104c5026";
+    var apiUrl = "https://api.openweathermap.org/geo/1.0/direct?q="+ city + "&limit=1&appid=4d7dc3e3b9de372c87b2cd21104c5026";
     fetch(apiUrl)
         .then(function (response) {
             if (response.ok) {
@@ -94,7 +94,7 @@ var displayWeather = function(data, city) {
         uvIndex.classList = "severe";
     };
 
-    weatherImg.setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + ".png")
+    weatherImg.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + ".png")
 
     cityDate.textContent = city + " (" + (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear() + ")";
     temp.textContent = "Temp: " + data.current.temp + "°F";
@@ -142,7 +142,7 @@ var displayForecast = function(data, city) {
         dayCard.classList = "card col-2";
 
         forecastDate.textContent = (today.getMonth()+1) + "/" + (today.getDate()+i+1) + "/" + today.getFullYear();
-        forecastIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + ".png");
+        forecastIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + ".png");
         forecastTemp.textContent = "Temp: " + data.daily[i].temp.day + "°F";
         forecastWind.textContent = "Wind: " + data.daily[i].wind_speed + "MPH";
         forecastHumidity.textContent = "Humidity: " + data.daily[i].humidity + "%";
