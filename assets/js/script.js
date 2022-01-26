@@ -182,16 +182,5 @@ var searchHistory = function(city) {
     })
 
 }        
-                    
-// display a city in search history again when a user click it
-$(document).ready(function() {
-        
-    $(".search-btn").click(function () {
-        var searchedCity = $(this).text();
-        console.log(searchedCity)
-        getLatLon(searchedCity);
-        // $(this).remove();    
-    })
-})
 
 searchFormEl.addEventListener("submit", citySubmitHandler);
